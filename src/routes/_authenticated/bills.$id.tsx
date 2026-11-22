@@ -40,7 +40,7 @@ function BillPage() {
 
   async function toggle(pid: string, is_paid: boolean) {
     const { error } = await supabase.from("participants").update({ is_paid }).eq("id", pid);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["bill", id] });
     qc.invalidateQueries({ queryKey: ["bills"] });
   }

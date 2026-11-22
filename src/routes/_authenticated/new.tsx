@@ -77,9 +77,9 @@ function NewSplit() {
   }
 
   async function save() {
-    if (!payerUpi.includes("@")) return toast.error("Add your UPI ID so friends can pay you");
-    if (!friends.length) return toast.error("Add at least one friend");
-    if (total <= 0) return toast.error("Add items to the bill");
+    if (!payerUpi.includes("@")) { toast.error("Add your UPI ID so friends can pay you"); return; }
+    if (!friends.length) { toast.error("Add at least one friend"); return; }
+    if (total <= 0) { toast.error("Add items to the bill"); return; }
     setSaving(true);
     localStorage.setItem("pp_name", payerName); localStorage.setItem("pp_upi", payerUpi);
     try {
@@ -88,7 +88,7 @@ function NewSplit() {
         split_mode: mode, payer_name: payerName || "PayPool user", payer_upi: payerUpi, receipt_path: receiptPath, note: merchant,
       }).select().single();
       if (error) throw error;
-      const { error: pe } = await supabase.from("participants").insert(friends.map((f) => ({ id: f.id, bill_id: bill.id, name: f.name, upi_id: f.upi_id, share: shares[f.id] ?? 0 })));
+      const { error: pe } = await supabase.from("participants").insert(friends.map((f) => ({ id: f.id, bill_id: bill.id, name: f.name, upi_id: f.upi_id ?? null, share: shares[f.id] ?? 0 })));
       if (pe) throw pe;
       if (items.length) {
         const { error: ie } = await supabase.from("bill_items").insert(items.map((i) => ({ bill_id: bill.id, name: i.name, qty: i.qty, price: i.price, assigned_to: i.assigned_to })));
